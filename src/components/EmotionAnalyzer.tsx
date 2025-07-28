@@ -6,6 +6,8 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Camera, CameraOff, Activity, Brain } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useSessionAnalytics } from '@/hooks/useSessionAnalytics';
+import SessionAnalytics from './SessionAnalytics';
 interface EmotionData {
   expression: string;
   confidence: number;
@@ -30,9 +32,17 @@ const EmotionAnalyzer = () => {
   const [emotions, setEmotions] = useState<EmotionData[]>([]);
   const [dominantEmotion, setDominantEmotion] = useState<EmotionData | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const { toast } = useToast();
+  
+  // Session analytics
   const {
-    toast
-  } = useToast();
+    sessionData,
+    isSessionActive,
+    startSession,
+    stopSession,
+    resetSession,
+    addEmotionEntry
+  } = useSessionAnalytics();
   const emotionColors: Record<string, string> = {
     happy: 'emotion-happy',
     sad: 'emotion-sad',
@@ -161,6 +171,11 @@ const EmotionAnalyzer = () => {
         })).sort((a, b) => b.confidence - a.confidence);
         setEmotions(emotionArray);
         setDominantEmotion(emotionArray[0]);
+        
+        // Add to session analytics
+        if (emotionArray[0]) {
+          addEmotionEntry(emotionArray[0].expression, emotionArray[0].confidence);
+        }
       } else {
         setEmotions([]);
         setDominantEmotion(null);
@@ -176,6 +191,7 @@ const EmotionAnalyzer = () => {
         intervalRef.current = null;
       }
       setIsAnalyzing(false);
+      stopSession();
       toast({
         title: "Analysis stopped",
         description: "Emotion analysis has been paused"
@@ -184,13 +200,14 @@ const EmotionAnalyzer = () => {
       if (modelsLoaded && stream) {
         intervalRef.current = setInterval(analyzeEmotions, 500); // Analyze every 500ms
         setIsAnalyzing(true);
+        startSession();
         toast({
           title: "Analysis started",
           description: "Real-time emotion analysis is now active"
         });
       }
     }
-  }, [isAnalyzing, modelsLoaded, stream, analyzeEmotions, toast]);
+  }, [isAnalyzing, modelsLoaded, stream, analyzeEmotions, toast, startSession, stopSession]);
   useEffect(() => {
     loadModels();
   }, [loadModels]);
@@ -214,9 +231,9 @@ const EmotionAnalyzer = () => {
         </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
           {/* Video Feed */}
-          <div className="lg:col-span-2">
+          <div className="xl:col-span-2">
             <Card className="p-6 glass-morphism border-accent/20">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-2xl font-semibold flex items-center gap-2">
@@ -334,6 +351,15 @@ const EmotionAnalyzer = () => {
                   </p>}
               </div>
             </Card>
+          </div>
+
+          {/* Session Analytics */}
+          <div className="xl:col-span-1">
+            <SessionAnalytics
+              sessionData={sessionData}
+              isSessionActive={isSessionActive}
+              onResetSession={resetSession}
+            />
           </div>
         </div>
       </div>
