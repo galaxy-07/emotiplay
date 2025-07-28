@@ -71,10 +71,15 @@ export const useSessionAnalytics = () => {
       newDominantEmotions[emotion] = (newDominantEmotions[emotion] || 0) + 1;
 
       let emotionChanges = prev.emotionChanges;
-      if (lastEmotionRef.current && lastEmotionRef.current !== emotion) {
+      // Only count as change if it's different from last emotion and confidence > 50%
+      if (lastEmotionRef.current && lastEmotionRef.current !== emotion && confidence > 50) {
         emotionChanges++;
       }
-      lastEmotionRef.current = emotion;
+      
+      // Only update lastEmotion if confidence is high enough to be meaningful
+      if (confidence > 50) {
+        lastEmotionRef.current = emotion;
+      }
 
       return {
         ...prev,

@@ -115,35 +115,43 @@ const SessionAnalytics = ({ sessionData, isSessionActive, onResetSession }: Sess
         </div>
       </Card>
 
-      {/* AI Insights */}
+      {/* AI Insights - Only show when session is stopped */}
       <Card className="p-6 glass-morphism border-accent/20">
         <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <Lightbulb className="w-5 h-5" />
           AI Insights & Recommendations
         </h3>
 
-        <div className="space-y-4">
-          {insights.map((insight, index) => (
-            <div
-              key={index}
-              className={`p-4 rounded-lg border ${getInsightColorClass(insight.type)}`}
-            >
-              <div className="flex items-start gap-3">
-                {getInsightIcon(insight.type)}
-                <div className="flex-1">
-                  <h4 className="font-medium mb-1">{insight.title}</h4>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    {insight.description}
-                  </p>
-                  <div className="bg-background/50 p-3 rounded border-l-4 border-primary">
-                    <p className="text-sm font-medium">💡 Recommendation:</p>
-                    <p className="text-sm">{insight.recommendation}</p>
+        {isSessionActive ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <Lightbulb className="w-8 h-8 mx-auto mb-2 opacity-50" />
+            <p>AI insights will be generated when you stop the analysis session</p>
+            <p className="text-sm mt-1">Stop the camera to see personalized recommendations</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {insights.map((insight, index) => (
+              <div
+                key={index}
+                className={`p-4 rounded-lg border ${getInsightColorClass(insight.type)}`}
+              >
+                <div className="flex items-start gap-3">
+                  {getInsightIcon(insight.type)}
+                  <div className="flex-1">
+                    <h4 className="font-medium mb-1">{insight.title}</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {insight.description}
+                    </p>
+                    <div className="bg-background/50 p-3 rounded border-l-4 border-primary">
+                      <p className="text-sm font-medium">💡 Recommendation:</p>
+                      <p className="text-sm">{insight.recommendation}</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </Card>
 
       {/* Session Status */}
