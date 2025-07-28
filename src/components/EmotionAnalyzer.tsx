@@ -6,13 +6,11 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Camera, CameraOff, Activity, Brain } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
 interface EmotionData {
   expression: string;
   confidence: number;
   color: string;
 }
-
 interface FaceExpressions {
   angry: number;
   disgusted: number;
@@ -22,7 +20,6 @@ interface FaceExpressions {
   sad: number;
   surprised: number;
 }
-
 const EmotionAnalyzer = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -33,8 +30,9 @@ const EmotionAnalyzer = () => {
   const [emotions, setEmotions] = useState<EmotionData[]>([]);
   const [dominantEmotion, setDominantEmotion] = useState<EmotionData | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   const emotionColors: Record<string, string> = {
     happy: 'emotion-happy',
     sad: 'emotion-sad',
@@ -44,19 +42,11 @@ const EmotionAnalyzer = () => {
     disgusted: 'emotion-disgusted',
     neutral: 'emotion-neutral'
   };
-
   const loadModels = useCallback(async () => {
     try {
       setIsLoading(true);
       const modelPath = '/models';
-      
-      await Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri(modelPath),
-        faceapi.nets.faceLandmark68Net.loadFromUri(modelPath),
-        faceapi.nets.faceRecognitionNet.loadFromUri(modelPath),
-        faceapi.nets.faceExpressionNet.loadFromUri(modelPath)
-      ]);
-      
+      await Promise.all([faceapi.nets.tinyFaceDetector.loadFromUri(modelPath), faceapi.nets.faceLandmark68Net.loadFromUri(modelPath), faceapi.nets.faceRecognitionNet.loadFromUri(modelPath), faceapi.nets.faceExpressionNet.loadFromUri(modelPath)]);
       setModelsLoaded(true);
       toast({
         title: "Models loaded successfully",
@@ -69,15 +59,10 @@ const EmotionAnalyzer = () => {
         description: "Failed to load face detection models. Using face-api.js CDN fallback...",
         variant: "destructive"
       });
-      
+
       // Fallback to CDN
       try {
-        await Promise.all([
-          faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/model'),
-          faceapi.nets.faceLandmark68Net.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/model'),
-          faceapi.nets.faceRecognitionNet.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/model'),
-          faceapi.nets.faceExpressionNet.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/model')
-        ]);
+        await Promise.all([faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/model'), faceapi.nets.faceLandmark68Net.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/model'), faceapi.nets.faceRecognitionNet.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/model'), faceapi.nets.faceExpressionNet.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/model')]);
         setModelsLoaded(true);
         toast({
           title: "Models loaded from CDN",
@@ -95,23 +80,23 @@ const EmotionAnalyzer = () => {
       setIsLoading(false);
     }
   }, [toast]);
-
   const startCamera = useCallback(async () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { 
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
+        video: {
+          width: {
+            ideal: 1280
+          },
+          height: {
+            ideal: 720
+          },
           facingMode: 'user'
         }
       });
-      
       setStream(mediaStream);
-      
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
       }
-      
       toast({
         title: "Camera started",
         description: "Video feed is now active"
@@ -125,54 +110,41 @@ const EmotionAnalyzer = () => {
       });
     }
   }, [toast]);
-
   const stopCamera = useCallback(() => {
     if (stream) {
       stream.getTracks().forEach(track => track.stop());
       setStream(null);
     }
-    
     if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
-    
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-    
     setIsAnalyzing(false);
     setEmotions([]);
     setDominantEmotion(null);
-    
     toast({
       title: "Camera stopped",
       description: "Video feed has been stopped"
     });
   }, [stream, toast]);
-
   const analyzeEmotions = useCallback(async () => {
     if (!videoRef.current || !canvasRef.current || !modelsLoaded) return;
-
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-
     if (!ctx || video.videoWidth === 0) return;
 
     // Set canvas dimensions to match video
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-
     try {
-      const detections = await faceapi
-        .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
-        .withFaceLandmarks()
-        .withFaceExpressions();
+      const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
 
       // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       if (detections.length > 0) {
         // Draw detections
         faceapi.draw.drawDetections(canvas, detections);
@@ -180,16 +152,13 @@ const EmotionAnalyzer = () => {
 
         // Get expressions from first face
         const expressions = detections[0].expressions as FaceExpressions;
-        
-        // Convert to array and sort by confidence
-        const emotionArray: EmotionData[] = Object.entries(expressions)
-          .map(([emotion, confidence]) => ({
-            expression: emotion,
-            confidence: Math.round(confidence * 100),
-            color: emotionColors[emotion] || 'emotion-neutral'
-          }))
-          .sort((a, b) => b.confidence - a.confidence);
 
+        // Convert to array and sort by confidence
+        const emotionArray: EmotionData[] = Object.entries(expressions).map(([emotion, confidence]) => ({
+          expression: emotion,
+          confidence: Math.round(confidence * 100),
+          color: emotionColors[emotion] || 'emotion-neutral'
+        })).sort((a, b) => b.confidence - a.confidence);
         setEmotions(emotionArray);
         setDominantEmotion(emotionArray[0]);
       } else {
@@ -200,7 +169,6 @@ const EmotionAnalyzer = () => {
       console.error('Error analyzing emotions:', error);
     }
   }, [modelsLoaded, emotionColors]);
-
   const toggleAnalysis = useCallback(() => {
     if (isAnalyzing) {
       if (intervalRef.current) {
@@ -223,11 +191,9 @@ const EmotionAnalyzer = () => {
       }
     }
   }, [isAnalyzing, modelsLoaded, stream, analyzeEmotions, toast]);
-
   useEffect(() => {
     loadModels();
   }, [loadModels]);
-
   useEffect(() => {
     return () => {
       if (intervalRef.current) {
@@ -238,18 +204,14 @@ const EmotionAnalyzer = () => {
       }
     };
   }, [stream]);
-
-  return (
-    <div className="min-h-screen bg-background p-6">
+  return <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            AI Emotion Analyzer
-          </h1>
+        </h1>
           <p className="text-muted-foreground text-lg">
-            Real-time facial emotion recognition using advanced AI
-          </p>
+        </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -263,31 +225,15 @@ const EmotionAnalyzer = () => {
                 </h2>
                 
                 <div className="flex gap-2">
-                  {!stream ? (
-                    <Button 
-                      onClick={startCamera} 
-                      disabled={isLoading}
-                      className="bg-primary hover:bg-primary/80"
-                    >
+                  {!stream ? <Button onClick={startCamera} disabled={isLoading} className="bg-primary hover:bg-primary/80">
                       <Camera className="w-4 h-4 mr-2" />
                       Start Camera
-                    </Button>
-                  ) : (
-                    <Button 
-                      onClick={stopCamera}
-                      variant="destructive"
-                    >
+                    </Button> : <Button onClick={stopCamera} variant="destructive">
                       <CameraOff className="w-4 h-4 mr-2" />
                       Stop Camera
-                    </Button>
-                  )}
+                    </Button>}
                   
-                  <Button 
-                    onClick={toggleAnalysis}
-                    disabled={!stream || !modelsLoaded}
-                    variant={isAnalyzing ? "secondary" : "default"}
-                    className={isAnalyzing ? "emotion-pulse" : ""}
-                  >
+                  <Button onClick={toggleAnalysis} disabled={!stream || !modelsLoaded} variant={isAnalyzing ? "secondary" : "default"} className={isAnalyzing ? "emotion-pulse" : ""}>
                     <Brain className="w-4 h-4 mr-2" />
                     {isAnalyzing ? 'Stop Analysis' : 'Start Analysis'}
                   </Button>
@@ -296,42 +242,26 @@ const EmotionAnalyzer = () => {
 
               {/* Video Container */}
               <div className="relative rounded-lg overflow-hidden bg-card">
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className="w-full h-auto max-h-[500px] object-cover"
-                />
-                <canvas
-                  ref={canvasRef}
-                  className="absolute top-0 left-0 w-full h-full"
-                />
+                <video ref={videoRef} autoPlay playsInline muted className="w-full h-auto max-h-[500px] object-cover" />
+                <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full" />
                 
                 {/* Overlay Status */}
-                {dominantEmotion && (
-                  <div className="absolute top-4 left-4">
-                    <Badge 
-                      className={`emotion-glow text-lg px-4 py-2 border-none`}
-                      style={{ 
-                        backgroundColor: `hsl(var(--${dominantEmotion.color}))`,
-                        color: 'white'
-                      }}
-                    >
+                {dominantEmotion && <div className="absolute top-4 left-4">
+                    <Badge className={`emotion-glow text-lg px-4 py-2 border-none`} style={{
+                  backgroundColor: `hsl(var(--${dominantEmotion.color}))`,
+                  color: 'white'
+                }}>
                       {dominantEmotion.expression.toUpperCase()} {dominantEmotion.confidence}%
                     </Badge>
-                  </div>
-                )}
+                  </div>}
 
                 {/* Loading State */}
-                {isLoading && (
-                  <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                {isLoading && <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
                     <div className="text-center">
                       <Activity className="w-8 h-8 animate-spin mx-auto mb-2" />
                       <p>Loading AI models...</p>
                     </div>
-                  </div>
-                )}
+                  </div>}
               </div>
 
               {/* Status Indicators */}
@@ -361,15 +291,11 @@ const EmotionAnalyzer = () => {
                 Current Emotion
               </h3>
               
-              {dominantEmotion ? (
-                <div className="text-center">
-                  <div 
-                    className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-bold emotion-pulse"
-                    style={{ 
-                      backgroundColor: `hsl(var(--${dominantEmotion.color}) / 0.2)`,
-                      border: `2px solid hsl(var(--${dominantEmotion.color}))`
-                    }}
-                  >
+              {dominantEmotion ? <div className="text-center">
+                  <div className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-bold emotion-pulse" style={{
+                backgroundColor: `hsl(var(--${dominantEmotion.color}) / 0.2)`,
+                border: `2px solid hsl(var(--${dominantEmotion.color}))`
+              }}>
                     {dominantEmotion.confidence}%
                   </div>
                   <h4 className="text-2xl font-bold capitalize mb-2">
@@ -378,15 +304,12 @@ const EmotionAnalyzer = () => {
                   <p className="text-muted-foreground">
                     Confidence: {dominantEmotion.confidence}%
                   </p>
-                </div>
-              ) : (
-                <div className="text-center text-muted-foreground">
+                </div> : <div className="text-center text-muted-foreground">
                   <div className="w-24 h-24 rounded-full mx-auto mb-4 bg-muted flex items-center justify-center">
                     <Brain className="w-8 h-8" />
                   </div>
                   <p>No face detected</p>
-                </div>
-              )}
+                </div>}
             </Card>
 
             {/* Emotion Breakdown */}
@@ -394,8 +317,7 @@ const EmotionAnalyzer = () => {
               <h3 className="text-xl font-semibold mb-4">Emotion Analysis</h3>
               
               <div className="space-y-3">
-                {emotions.length > 0 ? emotions.map((emotion) => (
-                  <div key={emotion.expression} className="space-y-2">
+                {emotions.length > 0 ? emotions.map(emotion => <div key={emotion.expression} className="space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="capitalize font-medium">
                         {emotion.expression}
@@ -404,26 +326,17 @@ const EmotionAnalyzer = () => {
                         {emotion.confidence}%
                       </span>
                     </div>
-                    <Progress 
-                      value={emotion.confidence} 
-                      className="h-2"
-                      style={{
-                        '--progress-background': `hsl(var(--${emotion.color}))`,
-                      } as React.CSSProperties}
-                    />
-                  </div>
-                )) : (
-                  <p className="text-muted-foreground text-center py-8">
+                    <Progress value={emotion.confidence} className="h-2" style={{
+                  '--progress-background': `hsl(var(--${emotion.color}))`
+                } as React.CSSProperties} />
+                  </div>) : <p className="text-muted-foreground text-center py-8">
                     Start analysis to see emotion breakdown
-                  </p>
-                )}
+                  </p>}
               </div>
             </Card>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default EmotionAnalyzer;
