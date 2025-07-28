@@ -61,6 +61,15 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				emotion: {
+					happy: 'hsl(var(--emotion-happy))',
+					sad: 'hsl(var(--emotion-sad))',
+					angry: 'hsl(var(--emotion-angry))',
+					surprised: 'hsl(var(--emotion-surprised))',
+					fearful: 'hsl(var(--emotion-fearful))',
+					disgusted: 'hsl(var(--emotion-disgusted))',
+					neutral: 'hsl(var(--emotion-neutral))'
 				}
 			},
 			borderRadius: {
