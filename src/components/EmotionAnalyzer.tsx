@@ -8,6 +8,7 @@ import { Camera, CameraOff, Activity, Brain } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useSessionAnalytics } from '@/hooks/useSessionAnalytics';
 import SessionAnalytics from './SessionAnalytics';
+import MusicPlayer, { MusicPlayerRef } from './MusicPlayer';
 interface EmotionData {
   expression: string;
   confidence: number;
@@ -32,6 +33,7 @@ const EmotionAnalyzer = () => {
   const [emotions, setEmotions] = useState<EmotionData[]>([]);
   const [dominantEmotion, setDominantEmotion] = useState<EmotionData | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const musicPlayerRef = useRef<MusicPlayerRef>(null);
   const { toast } = useToast();
   
   // Session analytics
@@ -140,6 +142,11 @@ const EmotionAnalyzer = () => {
       description: "Video feed has been stopped"
     });
   }, [stream, toast]);
+
+  const handleEmotionDetected = useCallback((emotion: string, confidence: number) => {
+    musicPlayerRef.current?.handleEmotionChange(emotion, confidence);
+  }, []);
+
   const analyzeEmotions = useCallback(async () => {
     if (!videoRef.current || !canvasRef.current || !modelsLoaded) return;
     const video = videoRef.current;
@@ -172,9 +179,10 @@ const EmotionAnalyzer = () => {
         setEmotions(emotionArray);
         setDominantEmotion(emotionArray[0]);
         
-        // Add to session analytics
+        // Add to session analytics and trigger music change
         if (emotionArray[0]) {
           addEmotionEntry(emotionArray[0].expression, emotionArray[0].confidence);
+          handleEmotionDetected(emotionArray[0].expression, emotionArray[0].confidence);
         }
       } else {
         setEmotions([]);
@@ -183,7 +191,7 @@ const EmotionAnalyzer = () => {
     } catch (error) {
       console.error('Error analyzing emotions:', error);
     }
-  }, [modelsLoaded, emotionColors]);
+  }, [modelsLoaded, emotionColors, addEmotionEntry, handleEmotionDetected]);
   const toggleAnalysis = useCallback(() => {
     if (isAnalyzing) {
       if (intervalRef.current) {
@@ -208,6 +216,11 @@ const EmotionAnalyzer = () => {
       }
     }
   }, [isAnalyzing, modelsLoaded, stream, analyzeEmotions, toast, startSession, stopSession]);
+
+  const handleSessionReset = useCallback(() => {
+    resetSession();
+    musicPlayerRef.current?.resetMusicSession();
+  }, [resetSession]);
   useEffect(() => {
     loadModels();
   }, [loadModels]);
@@ -226,9 +239,11 @@ const EmotionAnalyzer = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-        </h1>
+            Emotion-Driven Music Experience
+          </h1>
           <p className="text-muted-foreground text-lg">
-        </p>
+            Real-time emotion detection with personalized music recommendations
+          </p>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
@@ -354,12 +369,15 @@ const EmotionAnalyzer = () => {
           </div>
 
           {/* Session Analytics */}
-          <div className="xl:col-span-1">
+          <div className="xl:col-span-1 space-y-6">
             <SessionAnalytics
               sessionData={sessionData}
               isSessionActive={isSessionActive}
               onResetSession={resetSession}
             />
+            
+            {/* Music Player */}
+            <MusicPlayer ref={musicPlayerRef} />
           </div>
         </div>
       </div>
