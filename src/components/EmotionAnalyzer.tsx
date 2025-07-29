@@ -234,7 +234,24 @@ const EmotionAnalyzer = () => {
       }
     };
   }, [stream]);
-  return <div className="min-h-screen bg-background p-6">
+  // Dynamic background based on current emotion
+  const getEmotionBackground = () => {
+    if (!dominantEmotion) return 'bg-background';
+    
+    const emotionGradients = {
+      happy: 'bg-gradient-to-br from-yellow-50/20 via-background to-orange-50/20',
+      sad: 'bg-gradient-to-br from-blue-50/20 via-background to-indigo-50/20',
+      angry: 'bg-gradient-to-br from-rose-50/20 via-background to-red-50/20',
+      surprised: 'bg-gradient-to-br from-amber-50/20 via-background to-yellow-50/20',
+      fearful: 'bg-gradient-to-br from-purple-50/20 via-background to-violet-50/20',
+      disgusted: 'bg-gradient-to-br from-teal-50/20 via-background to-cyan-50/20',
+      neutral: 'bg-gradient-to-br from-slate-50/20 via-background to-gray-50/20'
+    };
+    
+    return emotionGradients[dominantEmotion.expression as keyof typeof emotionGradients] || 'bg-background';
+  };
+
+  return <div className={`min-h-screen transition-all duration-1000 ease-in-out p-6 ${getEmotionBackground()}`}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -246,7 +263,7 @@ const EmotionAnalyzer = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Video Feed */}
           <div className="xl:col-span-2">
             <Card className="p-6 glass-morphism border-accent/20">
@@ -368,17 +385,24 @@ const EmotionAnalyzer = () => {
             </Card>
           </div>
 
-          {/* Session Analytics */}
+          {/* Right Sidebar - Session Analytics & Music */}
           <div className="xl:col-span-1 space-y-6">
             <SessionAnalytics
               sessionData={sessionData}
               isSessionActive={isSessionActive}
               onResetSession={resetSession}
             />
-            
-            {/* Music Player */}
-            <MusicPlayer ref={musicPlayerRef} />
           </div>
+        </div>
+        
+        {/* Music Player - Fixed positioning for better desktop accessibility */}
+        <div className="fixed bottom-6 right-6 w-96 z-50 hidden lg:block">
+          <MusicPlayer ref={musicPlayerRef} className="shadow-2xl" />
+        </div>
+        
+        {/* Mobile Music Player */}
+        <div className="mt-6 lg:hidden">
+          <MusicPlayer ref={musicPlayerRef} />
         </div>
       </div>
     </div>;
