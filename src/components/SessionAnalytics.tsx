@@ -4,8 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { SessionData } from '@/hooks/useSessionAnalytics';
 import { generateEmotionInsights } from '@/utils/emotionInsights';
-import { Clock, TrendingUp, RotateCcw, Lightbulb, AlertCircle, CheckCircle, Info, Brain } from 'lucide-react';
-import EmotionChart from './EmotionChart';
+import { Clock, TrendingUp, RotateCcw, Lightbulb, AlertCircle, CheckCircle, Info } from 'lucide-react';
 interface SessionAnalyticsProps {
   sessionData: SessionData;
   isSessionActive: boolean;
@@ -82,11 +81,6 @@ const SessionAnalytics = ({
             <p className="text-sm text-muted-foreground">Session Duration</p>
           </div>
           
-          <div className="text-center p-4 rounded-lg bg-muted/50">
-            <TrendingUp className="w-6 h-6 mx-auto mb-2 text-accent" />
-            <p className="text-2xl font-bold">{emotionChanges}</p>
-            <p className="text-sm text-muted-foreground">Emotion Changes</p>
-          </div>
         </div>
 
         <div className="space-y-2">
@@ -107,59 +101,35 @@ const SessionAnalytics = ({
         </div>
       </Card>
 
-      {/* Emotion Distribution Chart - Only show when session is inactive */}
-      {!isSessionActive && emotions.length > 0 && (
-        <EmotionChart sessionData={sessionData} />
-      )}
+      {/* AI Insights - Only show when session is stopped */}
+      <Card className="p-6 glass-morphism border-accent/20">
+        <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+          <Lightbulb className="w-5 h-5" />
+          AI Insights & Recommendations
+        </h3>
 
-      {/* AI Insights & Recommendations - Only show when session is inactive */}
-      {!isSessionActive && emotions.length > 0 && (
-        <Card className="glass-morphism border-accent/20">
-          <div className="p-6">
-            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Brain className="w-5 h-5" />
-              Your Emotional Therapist Friend
-            </h3>
-            
-            <div className="space-y-4">
-              {insights.map((insight, index) => (
-                <div 
-                  key={index}
-                  className={`p-4 rounded-lg border ${getInsightColorClass(insight.type)} animate-fade-in`}
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <div className="flex items-start gap-3">
-                    {getInsightIcon(insight.type)}
-                    <div className="flex-1">
-                      <h4 className="font-semibold mb-2">{insight.title}</h4>
-                      <p className="text-sm text-muted-foreground mb-3">
-                        {insight.description}
-                      </p>
-                      <div className="bg-gradient-to-r from-background/80 to-accent/10 p-3 rounded-md border border-accent/20">
-                        <p className="text-sm font-medium">💡 Your friendly recommendation:</p>
-                        <p className="text-sm">{insight.recommendation}</p>
-                      </div>
+        {isSessionActive ? <div className="text-center py-8 text-muted-foreground">
+            <Lightbulb className="w-8 h-8 mx-auto mb-2 opacity-50" />
+            <p>AI insights will be generated when you stop the analysis session</p>
+            <p className="text-sm mt-1">Stop the camera to see personalized recommendations</p>
+          </div> : <div className="space-y-4">
+            {insights.map((insight, index) => <div key={index} className={`p-4 rounded-lg border ${getInsightColorClass(insight.type)}`}>
+                <div className="flex items-start gap-3">
+                  {getInsightIcon(insight.type)}
+                  <div className="flex-1">
+                    <h4 className="font-medium mb-1">{insight.title}</h4>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {insight.description}
+                    </p>
+                    <div className="bg-background/50 p-3 rounded border-l-4 border-primary">
+                      <p className="text-sm font-medium">💡 Recommendation:</p>
+                      <p className="text-sm">{insight.recommendation}</p>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </Card>
-      )}
-
-      {/* Session Status & Instructions */}
-      {isSessionActive && (
-        <Card className="glass-morphism border-accent/20">
-          <div className="p-4">
-            <div className="text-center py-6 text-muted-foreground">
-              <Brain className="w-8 h-8 mx-auto mb-3 opacity-50" />
-              <p className="font-medium">Session Analysis in Progress</p>
-              <p className="text-sm mt-1">Stop the camera to see your emotion chart and AI insights</p>
-            </div>
-          </div>
-        </Card>
-      )}
+              </div>)}
+          </div>}
+      </Card>
 
       {/* Session Status */}
       <Card className="p-4 glass-morphism border-accent/20">

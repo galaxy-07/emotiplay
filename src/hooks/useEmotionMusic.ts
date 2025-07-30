@@ -8,7 +8,6 @@ export const useEmotionMusic = () => {
   const { toast } = useToast();
   const lastEmotionRef = useRef<string | null>(null);
   const isLoadingTracksRef = useRef(false);
-  const autoPlayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const loadMusicForEmotion = useCallback(async (emotion: string, isEmotionChange: boolean = false) => {
     if (isLoadingTracksRef.current) return;
@@ -29,22 +28,9 @@ export const useEmotionMusic = () => {
           // If starting fresh, replace queue
           musicPlayer.clearQueue();
           musicPlayer.addToQueue(tracks);
-          
-          // Auto-play after 5 seconds
-          if (autoPlayTimeoutRef.current) {
-            clearTimeout(autoPlayTimeoutRef.current);
-          }
-          autoPlayTimeoutRef.current = setTimeout(() => {
-            musicPlayer.play();
-            toast({
-              title: `Auto-playing music for ${emotion} mood`,
-              description: `Started playing ${tracks.length} songs`,
-            });
-          }, 5000);
-          
           toast({
-            title: `Music queued for ${emotion} mood`,
-            description: `Loaded ${tracks.length} songs - auto-playing in 5 seconds`,
+            title: `Playing music for ${emotion} mood`,
+            description: `Loaded ${tracks.length} songs`,
           });
         }
       } else {
@@ -86,9 +72,6 @@ export const useEmotionMusic = () => {
   const resetMusicSession = useCallback(() => {
     musicPlayer.clearQueue();
     lastEmotionRef.current = null;
-    if (autoPlayTimeoutRef.current) {
-      clearTimeout(autoPlayTimeoutRef.current);
-    }
   }, [musicPlayer]);
 
   return {
