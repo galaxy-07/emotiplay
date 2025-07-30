@@ -34,8 +34,10 @@ const EmotionAnalyzer = () => {
   const [dominantEmotion, setDominantEmotion] = useState<EmotionData | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const musicPlayerRef = useRef<MusicPlayerRef>(null);
-  const { toast } = useToast();
-  
+  const {
+    toast
+  } = useToast();
+
   // Session analytics
   const {
     sessionData,
@@ -142,11 +144,9 @@ const EmotionAnalyzer = () => {
       description: "Video feed has been stopped"
     });
   }, [stream, toast]);
-
   const handleEmotionDetected = useCallback((emotion: string, confidence: number) => {
     musicPlayerRef.current?.handleEmotionChange(emotion, confidence);
   }, []);
-
   const analyzeEmotions = useCallback(async () => {
     if (!videoRef.current || !canvasRef.current || !modelsLoaded) return;
     const video = videoRef.current;
@@ -178,7 +178,7 @@ const EmotionAnalyzer = () => {
         })).sort((a, b) => b.confidence - a.confidence);
         setEmotions(emotionArray);
         setDominantEmotion(emotionArray[0]);
-        
+
         // Add to session analytics and trigger music change
         if (emotionArray[0]) {
           addEmotionEntry(emotionArray[0].expression, emotionArray[0].confidence);
@@ -216,7 +216,6 @@ const EmotionAnalyzer = () => {
       }
     }
   }, [isAnalyzing, modelsLoaded, stream, analyzeEmotions, toast, startSession, stopSession]);
-
   const handleSessionReset = useCallback(() => {
     resetSession();
     musicPlayerRef.current?.resetMusicSession();
@@ -237,17 +236,12 @@ const EmotionAnalyzer = () => {
   // Get current emotion for dynamic background
   const currentEmotion = musicPlayerRef.current?.getCurrentEmotion?.() || dominantEmotion?.expression;
   const emotionBgClass = currentEmotion ? `emotion-bg-${currentEmotion}` : '';
-
   return <div className={`min-h-screen bg-background p-6 pb-32 ${emotionBgClass}`}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Emotion-Driven Music Experience
-          </h1>
-          <p className="text-muted-foreground text-lg">
-            Real-time emotion detection with personalized music recommendations
-          </p>
+          
+          
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -382,11 +376,7 @@ const EmotionAnalyzer = () => {
 
         {/* Session Analytics - Fixed right */}
         <div className="fixed bottom-6 right-6 xl:w-72 z-50 max-h-[calc(100vh-12rem)]">
-          <SessionAnalytics
-            sessionData={sessionData}
-            isSessionActive={isSessionActive}
-            onResetSession={resetSession}
-          />
+          <SessionAnalytics sessionData={sessionData} isSessionActive={isSessionActive} onResetSession={resetSession} />
         </div>
       </div>
     </div>;
