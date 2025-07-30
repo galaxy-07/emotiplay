@@ -374,14 +374,14 @@ const EmotionAnalyzer = () => {
 
         </div>
 
-        {/* Fixed Sidebars */}
+        {/* Fixed Sidebars with proper spacing */}
         {/* Music Player - Fixed left */}
-        <div className="fixed bottom-6 left-6 xl:w-96 z-50">
+        <div className="fixed bottom-6 left-6 xl:w-96 z-50 max-h-[calc(100vh-12rem)]">
           <MusicPlayer ref={musicPlayerRef} className="shadow-2xl" />
         </div>
 
         {/* Session Analytics - Fixed right */}
-        <div className="fixed bottom-6 right-6 xl:w-80 z-50">
+        <div className="fixed bottom-6 right-6 xl:w-72 z-50 max-h-[calc(100vh-12rem)]">
           <SessionAnalytics
             sessionData={sessionData}
             isSessionActive={isSessionActive}

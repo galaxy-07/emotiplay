@@ -36,7 +36,10 @@ export const useMusicPlayer = () => {
     const handleCanPlay = () => setIsLoading(false);
     const handleEnded = () => {
       setIsPlaying(false);
-      playNext();
+      // Auto-play next song
+      setTimeout(() => {
+        playNext();
+      }, 500);
     };
     const handleError = () => {
       setIsLoading(false);
