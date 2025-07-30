@@ -247,7 +247,7 @@ const EmotionAnalyzer = () => {
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Video Feed */}
           <div className="xl:col-span-2">
-            <Card className="p-6 glass-morphism border-accent/20">
+            <Card className="p-6 glass-morphism border-accent/20 py-[2px] px-[20px] my-[6px]">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-2xl font-semibold flex items-center gap-2">
                   <Camera className="w-6 h-6" />
