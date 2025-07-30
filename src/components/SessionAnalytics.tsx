@@ -2,25 +2,23 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { SessionData } from '@/hooks/useSessionAnalytics';
 import { Clock, TrendingUp, RotateCcw } from 'lucide-react';
-
 interface SessionAnalyticsProps {
   sessionData: SessionData;
   isSessionActive: boolean;
   onResetSession: () => void;
 }
-
 const SessionAnalytics = ({
   sessionData,
   isSessionActive,
   onResetSession
 }: SessionAnalyticsProps) => {
-  const { duration } = sessionData;
-
+  const {
+    duration
+  } = sessionData;
   const formatDuration = (ms: number) => {
     const seconds = Math.floor(ms / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
-    
     if (hours > 0) {
       return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
     } else if (minutes > 0) {
@@ -29,11 +27,9 @@ const SessionAnalytics = ({
       return `${seconds}s`;
     }
   };
-
-  return (
-    <div className="space-y-4">
+  return <div className="space-y-4">
       {/* Session Overview */}
-      <Card className="p-4 glass-morphism border-accent/20">
+      <Card className="p-4 glass-morphism border-accent/20 px-[10px] py-[10px] my-0 mx-[45px]">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold flex items-center gap-2">
             <TrendingUp className="w-4 h-4" />
@@ -60,8 +56,6 @@ const SessionAnalytics = ({
           </span>
         </div>
       </Card>
-    </div>
-  );
+    </div>;
 };
-
 export default SessionAnalytics;
