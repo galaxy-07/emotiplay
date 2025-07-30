@@ -23,6 +23,7 @@ interface MusicPlayerProps {
 export interface MusicPlayerRef {
   handleEmotionChange: (emotion: string, confidence: number) => void;
   resetMusicSession: () => void;
+  getCurrentEmotion: () => string | null;
 }
 
 const MusicPlayer = forwardRef<MusicPlayerRef, MusicPlayerProps>(({ className }, ref) => {
@@ -39,14 +40,16 @@ const MusicPlayer = forwardRef<MusicPlayerRef, MusicPlayerProps>(({ className },
     setVolume,
     seek,
     handleEmotionChange,
-    resetMusicSession
+    resetMusicSession,
+    getCurrentEmotion
   } = useEmotionMusic();
 
   // Expose methods to parent component
   useImperativeHandle(ref, () => ({
     handleEmotionChange,
-    resetMusicSession
-  }), [handleEmotionChange, resetMusicSession]);
+    resetMusicSession,
+    getCurrentEmotion
+  }), [handleEmotionChange, resetMusicSession, getCurrentEmotion]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -63,7 +66,7 @@ const MusicPlayer = forwardRef<MusicPlayerRef, MusicPlayerProps>(({ className },
   };
 
   return (
-    <Card className={`w-full ${className || ''}`}>
+    <Card className={`w-full backdrop-blur-md bg-card/95 border-accent/30 ${className || ''}`}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Music className="h-5 w-5" />

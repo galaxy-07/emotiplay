@@ -52,6 +52,15 @@ All colors MUST be HSL.
     --gradient-emotion: linear-gradient(135deg, hsl(266 85% 58%) 0%, hsl(45 93% 58%) 50%, hsl(214 84% 56%) 100%);
     --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
 
+    /* Emotion-based background gradients */
+    --bg-happy: linear-gradient(135deg, hsl(45 93% 58% / 0.03) 0%, hsl(39 100% 57% / 0.02) 100%);
+    --bg-sad: linear-gradient(135deg, hsl(214 84% 56% / 0.03) 0%, hsl(220 91% 65% / 0.02) 100%);
+    --bg-angry: linear-gradient(135deg, hsl(0 84% 60% / 0.03) 0%, hsl(15 100% 55% / 0.02) 100%);
+    --bg-neutral: linear-gradient(135deg, hsl(215 20% 65% / 0.02) 0%, hsl(220 15% 20% / 0.01) 100%);
+    --bg-surprised: linear-gradient(135deg, hsl(39 100% 57% / 0.03) 0%, hsl(45 93% 58% / 0.02) 100%);
+    --bg-fearful: linear-gradient(135deg, hsl(280 100% 70% / 0.03) 0%, hsl(270 90% 60% / 0.02) 100%);
+    --bg-disgusted: linear-gradient(135deg, hsl(120 61% 50% / 0.03) 0%, hsl(100 50% 40% / 0.02) 100%);
+
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --animation-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -144,5 +153,41 @@ All colors MUST be HSL.
 
   .emotion-pulse {
     animation: emotion-pulse 2s ease-in-out infinite;
+  }
+
+  /* Dynamic emotion backgrounds */
+  .emotion-bg-happy {
+    background: var(--bg-happy);
+    transition: background 0.8s ease-in-out;
+  }
+
+  .emotion-bg-sad {
+    background: var(--bg-sad);
+    transition: background 0.8s ease-in-out;
+  }
+
+  .emotion-bg-angry {
+    background: var(--bg-angry);
+    transition: background 0.8s ease-in-out;
+  }
+
+  .emotion-bg-neutral {
+    background: var(--bg-neutral);
+    transition: background 0.8s ease-in-out;
+  }
+
+  .emotion-bg-surprised {
+    background: var(--bg-surprised);
+    transition: background 0.8s ease-in-out;
+  }
+
+  .emotion-bg-fearful {
+    background: var(--bg-fearful);
+    transition: background 0.8s ease-in-out;
+  }
+
+  .emotion-bg-disgusted {
+    background: var(--bg-disgusted);
+    transition: background 0.8s ease-in-out;
   }
 }

@@ -234,7 +234,11 @@ const EmotionAnalyzer = () => {
       }
     };
   }, [stream]);
-  return <div className="min-h-screen bg-background p-6">
+  // Get current emotion for dynamic background
+  const currentEmotion = musicPlayerRef.current?.getCurrentEmotion?.() || dominantEmotion?.expression;
+  const emotionBgClass = currentEmotion ? `emotion-bg-${currentEmotion}` : '';
+
+  return <div className={`min-h-screen bg-background p-6 pb-32 ${emotionBgClass}`}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -246,7 +250,7 @@ const EmotionAnalyzer = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Video Feed */}
           <div className="xl:col-span-2">
             <Card className="p-6 glass-morphism border-accent/20">
@@ -368,17 +372,19 @@ const EmotionAnalyzer = () => {
             </Card>
           </div>
 
-          {/* Session Analytics */}
+          {/* Right Sidebar */}
           <div className="xl:col-span-1 space-y-6">
             <SessionAnalytics
               sessionData={sessionData}
               isSessionActive={isSessionActive}
               onResetSession={resetSession}
             />
-            
-            {/* Music Player */}
-            <MusicPlayer ref={musicPlayerRef} />
           </div>
+        </div>
+
+        {/* Music Player - Fixed at bottom for easy access */}
+        <div className="fixed bottom-6 right-6 left-6 xl:left-auto xl:w-96 z-50">
+          <MusicPlayer ref={musicPlayerRef} className="shadow-2xl" />
         </div>
       </div>
     </div>;

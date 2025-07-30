@@ -25,9 +25,15 @@ export const useEmotionMusic = () => {
             description: `Added ${tracks.length} songs to queue`,
           });
         } else {
-          // If starting fresh, replace queue
+          // If starting fresh, replace queue and auto-play
           musicPlayer.clearQueue();
           musicPlayer.addToQueue(tracks);
+          
+          // Auto-play after tracks are added
+          setTimeout(() => {
+            musicPlayer.play();
+          }, 1000);
+          
           toast({
             title: `Playing music for ${emotion} mood`,
             description: `Loaded ${tracks.length} songs`,
@@ -74,9 +80,15 @@ export const useEmotionMusic = () => {
     lastEmotionRef.current = null;
   }, [musicPlayer]);
 
+  // Get current emotion for background theming
+  const getCurrentEmotion = useCallback(() => {
+    return lastEmotionRef.current;
+  }, []);
+
   return {
     ...musicPlayer,
     handleEmotionChange,
-    resetMusicSession
+    resetMusicSession,
+    getCurrentEmotion
   };
 };
