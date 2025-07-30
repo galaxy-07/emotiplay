@@ -372,19 +372,21 @@ const EmotionAnalyzer = () => {
             </Card>
           </div>
 
-          {/* Right Sidebar */}
-          <div className="xl:col-span-1 space-y-6">
-            <SessionAnalytics
-              sessionData={sessionData}
-              isSessionActive={isSessionActive}
-              onResetSession={resetSession}
-            />
-          </div>
         </div>
 
-        {/* Music Player - Fixed at bottom for easy access */}
-        <div className="fixed bottom-6 right-6 left-6 xl:left-auto xl:w-96 z-50">
+        {/* Fixed Sidebars */}
+        {/* Music Player - Fixed left */}
+        <div className="fixed bottom-6 left-6 xl:w-96 z-50">
           <MusicPlayer ref={musicPlayerRef} className="shadow-2xl" />
+        </div>
+
+        {/* Session Analytics - Fixed right */}
+        <div className="fixed bottom-6 right-6 xl:w-80 z-50">
+          <SessionAnalytics
+            sessionData={sessionData}
+            isSessionActive={isSessionActive}
+            onResetSession={resetSession}
+          />
         </div>
       </div>
     </div>;

@@ -169,6 +169,16 @@ export const useMusicPlayer = () => {
     }
   }, []);
 
+  const playTrackFromQueue = useCallback((index: number) => {
+    if (queue.tracks[index]) {
+      setQueue(prev => ({ ...prev, currentIndex: index }));
+      loadTrack(queue.tracks[index]);
+      if (isPlaying || !currentTrack) {
+        play();
+      }
+    }
+  }, [queue, loadTrack, play, isPlaying, currentTrack]);
+
   return {
     isPlaying,
     currentTrack,
@@ -184,6 +194,7 @@ export const useMusicPlayer = () => {
     addToQueue,
     clearQueue,
     setVolume: setVolumeLevel,
-    seek
+    seek,
+    playTrackFromQueue
   };
 };

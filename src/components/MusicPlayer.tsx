@@ -39,6 +39,7 @@ const MusicPlayer = forwardRef<MusicPlayerRef, MusicPlayerProps>(({ className },
     playPrevious,
     setVolume,
     seek,
+    playTrackFromQueue,
     handleEmotionChange,
     resetMusicSession,
     getCurrentEmotion
@@ -177,7 +178,8 @@ const MusicPlayer = forwardRef<MusicPlayerRef, MusicPlayerProps>(({ className },
                 {queue.tracks.map((track, index) => (
                   <div
                     key={track.id}
-                    className={`flex items-center gap-2 p-2 rounded text-sm ${
+                    onClick={() => playTrackFromQueue(index)}
+                    className={`flex items-center gap-2 p-2 rounded text-sm cursor-pointer hover:bg-muted/50 transition-colors ${
                       index === queue.currentIndex 
                         ? 'bg-primary/10 border border-primary/20' 
                         : 'bg-muted/30'
