@@ -52,7 +52,7 @@ const MusicPlayer = forwardRef<MusicPlayerRef, MusicPlayerProps>(({
   const handleVolumeChange = (value: number[]) => {
     setVolume(value[0] / 100);
   };
-  return <Card className={`w-full backdrop-blur-md bg-card/95 border-accent/30 ${className || ''}`}>
+  return <Card className={`w-full glass-morphism border-accent/30 floating-tile hover-lift ${className || ''}`}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-sm">
           <Music className="h-5 w-5" />
@@ -61,7 +61,7 @@ const MusicPlayer = forwardRef<MusicPlayerRef, MusicPlayerProps>(({
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Current Track Display */}
-        <div className="bg-gradient-to-r from-background/50 to-accent/10 p-4 rounded-lg">
+        <div className="glass-morphism p-4 rounded-lg animate-fade-in">
           {currentTrack ? <div className="flex items-center gap-3">
               {currentTrack.artwork && <img src={currentTrack.artwork} alt={currentTrack.title} className="w-12 h-12 rounded-md object-cover" />}
               <div className="flex-1 min-w-0">
@@ -114,7 +114,7 @@ const MusicPlayer = forwardRef<MusicPlayerRef, MusicPlayerProps>(({
             </div>
             <ScrollArea className="h-32 w-full">
               <div className="space-y-1">
-                {queue.tracks.map((track, index) => <div key={track.id} onClick={() => playTrackFromQueue(index)} className={`flex items-center gap-2 p-2 rounded text-sm cursor-pointer hover:bg-muted/50 transition-colors ${index === queue.currentIndex ? 'bg-primary/10 border border-primary/20' : 'bg-muted/30'}`}>
+                {queue.tracks.map((track, index) => <div key={track.id} onClick={() => playTrackFromQueue(index)} className={`flex items-center gap-2 p-2 rounded text-sm cursor-pointer hover:scale-105 transition-all duration-200 glass-morphism ${index === queue.currentIndex ? 'border border-primary/30 bg-primary/10' : 'hover:bg-accent/10'}`}>
                     {track.artwork && <img src={track.artwork} alt={track.title} className="w-6 h-6 rounded object-cover" />}
                     <div className="flex-1 min-w-0">
                       <p className="truncate font-medium">{track.title}</p>

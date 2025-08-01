@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Camera, CameraOff, Activity, Brain } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useSessionAnalytics } from '@/hooks/useSessionAnalytics';
+import { ThemeToggle } from './ui/theme-toggle';
 import SessionAnalytics from './SessionAnalytics';
 import MusicPlayer, { MusicPlayerRef } from './MusicPlayer';
 interface EmotionData {
@@ -236,18 +237,34 @@ const EmotionAnalyzer = () => {
   // Get current emotion for dynamic background
   const currentEmotion = musicPlayerRef.current?.getCurrentEmotion?.() || dominantEmotion?.expression;
   const emotionBgClass = currentEmotion ? `emotion-bg-${currentEmotion}` : '';
-  return <div className={`min-h-screen bg-background p-6 pb-32 ${emotionBgClass}`}>
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          
-          
+  
+  return <div className={`min-h-screen bg-background p-6 pb-32 ${emotionBgClass} relative overflow-hidden`}>
+      {/* Enhanced background effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-4 -left-4 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-4 -right-4 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse animation-delay-1000"></div>
+        {currentEmotion && (
+          <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emotion-${currentEmotion}/10 rounded-full blur-3xl animate-pulse animation-delay-2000`}></div>
+        )}
+      </div>
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header with theme toggle */}
+        <div className="text-center mb-8 relative">
+          <div className="absolute top-0 right-0">
+            <ThemeToggle />
+          </div>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">
+            EmotiPlay
+          </h1>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Real-time emotion analysis with AI-powered music curation
+          </p>
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Video Feed */}
           <div className="xl:col-span-2">
-            <Card className="p-6 glass-morphism border-accent/20 py-[2px] px-[20px] my-[6px]">
+            <Card className="p-6 glass-morphism border-accent/20 floating-tile hover-lift animate-fade-in">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-2xl font-semibold flex items-center gap-2">
                   <Camera className="w-6 h-6" />
@@ -315,7 +332,7 @@ const EmotionAnalyzer = () => {
           {/* Emotion Dashboard */}
           <div className="space-y-6">
             {/* Dominant Emotion */}
-            <Card className="p-6 glass-morphism border-accent/20">
+            <Card className="p-6 glass-morphism border-accent/20 floating-tile hover-lift animate-scale-in">
               <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
                 <Brain className="w-5 h-5" />
                 Current Emotion
@@ -343,7 +360,7 @@ const EmotionAnalyzer = () => {
             </Card>
 
             {/* Emotion Breakdown */}
-            <Card className="p-6 glass-morphism border-accent/20">
+            <Card className="p-6 glass-morphism border-accent/20 floating-tile hover-lift animate-slide-up">
               <h3 className="text-xl font-semibold mb-4">Emotion Analysis</h3>
               
               <div className="space-y-3">
@@ -368,14 +385,14 @@ const EmotionAnalyzer = () => {
 
         </div>
 
-        {/* Fixed Sidebars with proper spacing */}
+        {/* Enhanced Fixed Sidebars */}
         {/* Music Player - Fixed left */}
-        <div className="fixed bottom-6 left-6 xl:w-96 z-50 max-h-[calc(100vh-12rem)]">
+        <div className="fixed bottom-6 left-6 xl:w-96 z-50 max-h-[calc(100vh-12rem)] animate-slide-up">
           <MusicPlayer ref={musicPlayerRef} className="shadow-2xl" />
         </div>
 
         {/* Session Analytics - Fixed right */}
-        <div className="fixed bottom-6 right-6 xl:w-72 z-50 max-h-[calc(100vh-12rem)]">
+        <div className="fixed bottom-6 right-6 xl:w-72 z-50 max-h-[calc(100vh-12rem)] animate-slide-up animation-delay-500">
           <SessionAnalytics sessionData={sessionData} isSessionActive={isSessionActive} onResetSession={resetSession} />
         </div>
       </div>

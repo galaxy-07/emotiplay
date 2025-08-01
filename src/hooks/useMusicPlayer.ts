@@ -34,12 +34,10 @@ export const useMusicPlayer = () => {
     
     const handleLoadStart = () => setIsLoading(true);
     const handleCanPlay = () => setIsLoading(false);
-    const handleEnded = () => {
+  const handleEnded = () => {
       setIsPlaying(false);
-      // Auto-play next song
-      setTimeout(() => {
-        playNext();
-      }, 500);
+      // Auto-play next song immediately
+      playNext();
     };
     const handleError = () => {
       setIsLoading(false);
@@ -143,11 +141,17 @@ export const useMusicPlayer = () => {
       currentIndex: prev.tracks.length === 0 ? 0 : prev.currentIndex
     }));
     
-    // If no track is currently loaded, load the first new track
+    // If no track is currently loaded, load and auto-play the first new track
     if (!currentTrack && tracks.length > 0) {
       loadTrack(tracks[0]);
+      // Auto-play after a short delay to ensure track is loaded
+      setTimeout(() => {
+        if (audioRef.current) {
+          play();
+        }
+      }, 1000);
     }
-  }, [currentTrack, loadTrack]);
+  }, [currentTrack, loadTrack, play]);
 
   const clearQueue = useCallback(() => {
     pause();

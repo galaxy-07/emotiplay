@@ -18,15 +18,15 @@ interface AudiusSearchResponse {
   data: AudiusTrack[];
 }
 
-// Emotion to genre mapping
+// Enhanced emotion to genre mapping for better variety
 const EMOTION_GENRES = {
-  neutral: ['chill', 'ambient', 'soft pop', 'indie'],
-  happy: ['pop', 'upbeat', 'dance', 'feel good'],
-  sad: ['sad', 'melancholy', 'emotional', 'acoustic'],
-  angry: ['rock', 'metal', 'intense', 'aggressive'],
-  surprised: ['electronic', 'experimental', 'energetic'],
-  fearful: ['dark ambient', 'cinematic', 'atmospheric'],
-  disgusted: ['alternative', 'grunge', 'punk']
+  neutral: ['chill', 'ambient', 'soft pop', 'indie', 'lo-fi', 'jazz', 'acoustic'],
+  happy: ['pop', 'upbeat', 'dance', 'feel good', 'funk', 'disco', 'reggae', 'afrobeat'],
+  sad: ['sad', 'melancholy', 'emotional', 'acoustic', 'blues', 'ballad', 'folk'],
+  angry: ['rock', 'metal', 'intense', 'aggressive', 'punk', 'hardcore', 'rap'],
+  surprised: ['electronic', 'experimental', 'energetic', 'synthwave', 'drum and bass'],
+  fearful: ['dark ambient', 'cinematic', 'atmospheric', 'horror', 'darkwave'],
+  disgusted: ['alternative', 'grunge', 'punk', 'industrial', 'noise']
 };
 
 class AudiusService {
@@ -88,28 +88,49 @@ class AudiusService {
     }
   }
 
-  async getRandomTracksByMood(emotion: string, count: number = 5): Promise<Track[]> {
+  async getRandomTracksByMood(emotion: string, count: number = 8): Promise<Track[]> {
     try {
-      // Get multiple searches with different keywords for variety
+      // Get multiple searches with different keywords for better variety
       const genres = EMOTION_GENRES[emotion as keyof typeof EMOTION_GENRES] || EMOTION_GENRES.neutral;
-      const promises = genres.slice(0, 2).map(genre => 
-        this.makeRequest(`/v1/tracks/search?query=${encodeURIComponent(genre)}&limit=${Math.ceil(count / 2)}`)
+      const allTracks: Track[] = [];
+      
+      // Search multiple genres for better variety
+      for (const genre of genres.slice(0, 3)) {
+        try {
+          const response: AudiusSearchResponse = await this.makeRequest(
+            `/v1/tracks/search?query=${encodeURIComponent(genre)}&limit=${Math.ceil(count / 2)}`
+          );
+          
+          const tracks = response.data.map(track => ({
+            id: track.id,
+            title: track.title,
+            artist: track.user.name,
+            artwork: track.artwork?.['480x480'],
+            streamUrl: `${AUDIUS_API_BASE}/v1/tracks/${track.id}/stream`,
+            duration: track.duration
+          }));
+          
+          allTracks.push(...tracks);
+        } catch (genreError) {
+          console.warn(`Failed to get tracks for genre ${genre}:`, genreError);
+        }
+      }
+      
+      // Also try to get some trending tracks for the emotion
+      try {
+        const trendingTracks = await this.getTrendingTracks(genres[0], 10);
+        allTracks.push(...trendingTracks);
+      } catch (trendingError) {
+        console.warn('Failed to get trending tracks:', trendingError);
+      }
+      
+      // Remove duplicates and shuffle
+      const uniqueTracks = allTracks.filter((track, index, self) => 
+        index === self.findIndex(t => t.id === track.id)
       );
-
-      const responses = await Promise.all(promises);
-      const allTracks = responses.flatMap((response: AudiusSearchResponse) => response.data);
       
-      // Shuffle and take requested count
-      const shuffled = allTracks.sort(() => 0.5 - Math.random());
-      
-      return shuffled.slice(0, count).map(track => ({
-        id: track.id,
-        title: track.title,
-        artist: track.user.name,
-        artwork: track.artwork?.['480x480'],
-        streamUrl: `${AUDIUS_API_BASE}/v1/tracks/${track.id}/stream`,
-        duration: track.duration
-      }));
+      const shuffled = uniqueTracks.sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, count);
     } catch (error) {
       console.error(`Failed to get random tracks for mood ${emotion}:`, error);
       return [];

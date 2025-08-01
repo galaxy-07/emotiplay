@@ -33,13 +33,13 @@ const SessionAnalytics = ({
   return (
     <div className="space-y-4">
       {/* Session Overview */}
-      <Card className="p-4 glass-morphism border-accent/20">
+      <Card className="p-4 glass-morphism border-accent/20 floating-tile hover-lift">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold flex items-center gap-2">
-            <TrendingUp className="w-4 h-4" />
+            <Clock className="w-4 h-4" />
             Session Analytics
           </h3>
-          <Button onClick={onResetSession} variant="outline" size="sm" className="flex items-center gap-2">
+          <Button onClick={onResetSession} variant="outline" size="sm" className="flex items-center gap-2 glass-morphism">
             <RotateCcw className="w-3 h-3" />
             Reset
           </Button>
