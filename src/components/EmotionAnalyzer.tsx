@@ -261,7 +261,7 @@ const EmotionAnalyzer = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
           {/* Video Feed */}
           <div className="xl:col-span-2">
             <Card className="p-6 glass-morphism border-accent/20 floating-tile hover-lift animate-fade-in">
@@ -382,18 +382,19 @@ const EmotionAnalyzer = () => {
               </div>
             </Card>
           </div>
-
         </div>
 
-        {/* Enhanced Fixed Sidebars */}
-        {/* Music Player - Fixed left */}
-        <div className="fixed bottom-6 left-6 xl:w-96 z-50 max-h-[calc(100vh-12rem)] animate-slide-up">
-          <MusicPlayer ref={musicPlayerRef} className="shadow-2xl" />
-        </div>
+        {/* Music Player and Session Analytics Grid */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          {/* Music Player */}
+          <div className="animate-slide-up">
+            <MusicPlayer ref={musicPlayerRef} />
+          </div>
 
-        {/* Session Analytics - Fixed right */}
-        <div className="fixed bottom-6 right-6 xl:w-72 z-50 max-h-[calc(100vh-12rem)] animate-slide-up animation-delay-500">
-          <SessionAnalytics sessionData={sessionData} isSessionActive={isSessionActive} onResetSession={resetSession} />
+          {/* Session Analytics */}
+          <div className="animate-slide-up animation-delay-500">
+            <SessionAnalytics sessionData={sessionData} isSessionActive={isSessionActive} onResetSession={handleSessionReset} />
+          </div>
         </div>
       </div>
     </div>;
