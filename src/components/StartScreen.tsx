@@ -3,23 +3,20 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Play, Brain, Music, Camera, Sparkles, Globe, Heart } from 'lucide-react';
 import { ThemeToggle } from './ui/theme-toggle';
-
 interface StartScreenProps {
   onStart: () => void;
 }
-
-const StartScreen = ({ onStart }: StartScreenProps) => {
+const StartScreen = ({
+  onStart
+}: StartScreenProps) => {
   const [isAnimating, setIsAnimating] = useState(false);
-
   const handleStart = () => {
     setIsAnimating(true);
     setTimeout(() => {
       onStart();
     }, 1000);
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 flex items-center justify-center relative overflow-hidden">
+  return <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5 flex items-center justify-center relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-4 -left-4 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
@@ -33,9 +30,7 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
       </div>
 
       {/* Main content */}
-      <div className={`relative z-10 text-center max-w-4xl mx-auto px-6 transition-all duration-1000 ${
-        isAnimating ? 'scale-110 opacity-0' : 'scale-100 opacity-100'
-      }`}>
+      <div className={`relative z-10 text-center max-w-4xl mx-auto px-6 transition-all duration-1000 ${isAnimating ? 'scale-110 opacity-0' : 'scale-100 opacity-100'}`}>
         
         {/* Hero Section */}
         <div className="mb-12">
@@ -53,9 +48,7 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
             EmotiPlay
           </h1>
           
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-            Experience music like never before. Our AI analyzes your emotions in real-time and curates the perfect soundtrack for your mood.
-          </p>
+          
         </div>
 
         {/* Feature cards */}
@@ -80,36 +73,10 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
         </div>
 
         {/* Stats */}
-        <div className="flex justify-center gap-8 mb-12 text-center">
-          <div className="px-4">
-            <div className="flex items-center justify-center gap-2 text-2xl font-bold text-primary mb-1">
-              <Heart className="w-6 h-6" />
-              7
-            </div>
-            <p className="text-sm text-muted-foreground">Emotions Tracked</p>
-          </div>
-          <div className="px-4">
-            <div className="flex items-center justify-center gap-2 text-2xl font-bold text-accent mb-1">
-              <Music className="w-6 h-6" />
-              1000+
-            </div>
-            <p className="text-sm text-muted-foreground">Songs Available</p>
-          </div>
-          <div className="px-4">
-            <div className="flex items-center justify-center gap-2 text-2xl font-bold text-emotion-happy mb-1">
-              <Globe className="w-6 h-6" />
-              Real-time
-            </div>
-            <p className="text-sm text-muted-foreground">Analysis</p>
-          </div>
-        </div>
+        
 
         {/* CTA Button */}
-        <Button 
-          onClick={handleStart}
-          size="lg"
-          className="text-lg px-12 py-6 bg-gradient-to-r from-primary to-accent hover:from-primary/80 hover:to-accent/80 transform hover:scale-105 transition-all duration-300 shadow-2xl group relative overflow-hidden"
-        >
+        <Button onClick={handleStart} size="lg" className="text-lg px-12 py-6 bg-gradient-to-r from-primary to-accent hover:from-primary/80 hover:to-accent/80 transform hover:scale-105 transition-all duration-300 shadow-2xl group relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <Play className="w-6 h-6 mr-3 group-hover:scale-110 transition-transform" />
           Start Your Emotional Journey
@@ -122,21 +89,15 @@ const StartScreen = ({ onStart }: StartScreenProps) => {
 
       {/* Floating particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 20 }).map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-2 h-2 bg-primary/20 rounded-full animate-float"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${3 + Math.random() * 4}s`
-            }}
-          />
-        ))}
+        {Array.from({
+        length: 20
+      }).map((_, i) => <div key={i} className="absolute w-2 h-2 bg-primary/20 rounded-full animate-float" style={{
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        animationDelay: `${Math.random() * 5}s`,
+        animationDuration: `${3 + Math.random() * 4}s`
+      }} />)}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default StartScreen;
