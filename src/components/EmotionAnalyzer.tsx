@@ -237,15 +237,12 @@ const EmotionAnalyzer = () => {
   // Get current emotion for dynamic background
   const currentEmotion = musicPlayerRef.current?.getCurrentEmotion?.() || dominantEmotion?.expression;
   const emotionBgClass = currentEmotion ? `emotion-bg-${currentEmotion}` : '';
-  
   return <div className={`min-h-screen bg-background p-6 pb-32 ${emotionBgClass} relative overflow-hidden`}>
       {/* Enhanced background effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-4 -left-4 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-4 -right-4 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-pulse animation-delay-1000"></div>
-        {currentEmotion && (
-          <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emotion-${currentEmotion}/10 rounded-full blur-3xl animate-pulse animation-delay-2000`}></div>
-        )}
+        {currentEmotion && <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emotion-${currentEmotion}/10 rounded-full blur-3xl animate-pulse animation-delay-2000`}></div>}
       </div>
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header with theme toggle */}
@@ -256,9 +253,7 @@ const EmotionAnalyzer = () => {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">
             EmotiPlay
           </h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Real-time emotion analysis with AI-powered music curation
-          </p>
+          
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
